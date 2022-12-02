@@ -34,6 +34,9 @@ class ProgrammingConsoleXBlock(XBlock):
         html = self.resource_string("static/html/programming_console.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/programming_console.css"))
+        frag.add_css(self.resource_string("static/css/bootstrap.min.css"))
+        frag.add_css(self.resource_string("static/css/fullscreen.min.css"))
+        frag.add_css(self.resource_string("static/css/xterm.min.css"))
         frag.add_javascript(self.resource_string("static/js/src/programming_console.js"))
         frag.initialize_js('ProgrammingConsoleXBlock')
         return frag
