@@ -79,6 +79,9 @@ class ProgrammingConsoleXBlock(XBlock, XBlockWithSettingsMixin, StudioEditableXB
         if in_studio_runtime:
             return self.author_view(context)
 
+        if not self.hostname or not self.username or not self.password or not self.port:
+            frag = Fragment(u"The SSH client hasn't been set up. Go to the Studio component.")
+            return frag
 
         context = {
             "hostname": self.hostname,
