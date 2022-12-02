@@ -6,8 +6,12 @@ from django.utils.translation import ugettext_lazy as _
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
 from xblock.fields import Scope, String, Integer
+from xblockutils.resources import ResourceLoader
 from xblockutils.settings import XBlockWithSettingsMixin
 from xblockutils.studio_editable import StudioEditableXBlockMixin
+
+
+LOADER = ResourceLoader(__name__)
 
 
 @XBlock.wants("settings")
@@ -41,6 +45,7 @@ class ProgrammingConsoleXBlock(XBlock, XBlockWithSettingsMixin, StudioEditableXB
         display_name=_("Password"),
         scope=Scope.settings,
         default=None,
+        help=_("Password must be encoded in base64"),
     )
 
     port = Integer(
@@ -75,8 +80,18 @@ class ProgrammingConsoleXBlock(XBlock, XBlockWithSettingsMixin, StudioEditableXB
             return self.author_view(context)
 
 
-        html = self.resource_string("static/html/programming_console.html")
-        frag = Fragment(html.format(self=self))
+        context = {
+            "hostname": self.hostname,
+            "username": self.username,
+            "password": self.password,
+            "port": self.port,
+        }
+
+        frag = Fragment(
+            LOADER.render_template(
+                "static/html/programming_console.html", context
+            )
+        )
         frag.add_css(self.resource_string("static/css/programming_console.css"))
         frag.add_javascript(self.resource_string("static/js/src/programming_console.js"))
         frag.initialize_js('ProgrammingConsoleXBlock')
