@@ -68,11 +68,29 @@ class ProgrammingConsoleXBlock(XBlock, XBlockWithSettingsMixin, StudioEditableXB
         The primary view of the ProgrammingConsoleXBlock, shown to students
         when viewing courses.
         """
+        in_studio_runtime = hasattr(
+            self.xmodule_runtime, 'is_author_mode')  # pylint: disable=no-member
+
+        if in_studio_runtime:
+            return self.author_view(context)
+
+
         html = self.resource_string("static/html/programming_console.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/programming_console.css"))
         frag.add_javascript(self.resource_string("static/js/src/programming_console.js"))
         frag.initialize_js('ProgrammingConsoleXBlock')
+        return frag
+
+    def author_view(self, context=None):
+        """  Returns author view fragment on Studio """
+        if not self.hostname or not self.username or not self.password or not self.port:
+            frag = Fragment(u"The SSH client hasn't been set up. Go to the edit tab.")
+            return frag
+
+
+        frag = Fragment(u"All set up.")
+
         return frag
 
     # TO-DO: change this handler to perform your own actions.  You may need more
