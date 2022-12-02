@@ -1,12 +1,17 @@
 """TO-DO: Write a description of what this XBlock is."""
 
 import pkg_resources
+from django.utils.translation import ugettext_lazy as _
+
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope
+from xblock.fields import Scope, String, Integer
+from xblockutils.settings import XBlockWithSettingsMixin
+from xblockutils.studio_editable import StudioEditableXBlockMixin
 
 
-class ProgrammingConsoleXBlock(XBlock):
+@XBlock.wants("settings")
+class ProgrammingConsoleXBlock(XBlock, XBlockWithSettingsMixin, StudioEditableXBlockMixin):
     """
     TO-DO: document what your XBlock does.
     """
@@ -14,10 +19,42 @@ class ProgrammingConsoleXBlock(XBlock):
     # Fields are defined on the class.  You can access them in your code as
     # self.<fieldname>.
 
-    # TO-DO: delete count, and define your own fields.
-    count = Integer(
-        default=0, scope=Scope.user_state,
-        help="A simple counter, to show something happening",
+    display_name = String(
+        display_name=_("Display Name"),
+        scope=Scope.settings,
+        default="Interactive Console",
+    )
+
+    hostname = String(
+        display_name=_("Hostname"),
+        scope=Scope.settings,
+        default=None,
+    )
+
+    username = String(
+        display_name=_("Username"),
+        scope=Scope.settings,
+        default=None,
+    )
+
+    password = String(
+        display_name=_("Password"),
+        scope=Scope.settings,
+        default=None,
+    )
+
+    port = Integer(
+        display_name=_("Port"),
+        scope=Scope.settings,
+        default=22,
+    )
+
+    editable_fields = (
+        "display_name",
+        "hostname",
+        "username",
+        "password",
+        "port"
     )
 
     def resource_string(self, path):
@@ -34,9 +71,6 @@ class ProgrammingConsoleXBlock(XBlock):
         html = self.resource_string("static/html/programming_console.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/programming_console.css"))
-        frag.add_css(self.resource_string("static/css/bootstrap.min.css"))
-        frag.add_css(self.resource_string("static/css/fullscreen.min.css"))
-        frag.add_css(self.resource_string("static/css/xterm.min.css"))
         frag.add_javascript(self.resource_string("static/js/src/programming_console.js"))
         frag.initialize_js('ProgrammingConsoleXBlock')
         return frag
