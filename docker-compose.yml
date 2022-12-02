@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  webssh:
+    build: .
+    command: >
+      wssh
+    ports:
+      - "8888:8888"
+
+    restart: always
+    stdin_open: true
+    tty: true
