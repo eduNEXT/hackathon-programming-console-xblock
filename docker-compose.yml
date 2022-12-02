@@ -10,3 +10,11 @@ services:
     restart: always
     stdin_open: true
     tty: true
+  sshubuntu:
+    build: ./ssh_container
+
+
+
+    restart: always
+    stdin_open: true
+    tty: true
